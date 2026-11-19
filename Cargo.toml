@@ -2,7 +2,7 @@
 name = "cryptage"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.88"
 license = "MIT"
 description = "Chiffrement et déchiffrement de fichiers, hors ligne, avec interface graphique (XChaCha20-Poly1305 + Argon2id)."
 repository = "https://github.com/N4ole/cryptage"
