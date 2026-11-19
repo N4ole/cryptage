@@ -2,7 +2,7 @@
 name = "cryptage"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.95"
 license = "MIT"
 description = "Chiffrement et déchiffrement de fichiers, hors ligne, avec interface graphique (XChaCha20-Poly1305 + Argon2id)."
 repository = "https://github.com/N4ole/cryptage"
@@ -22,10 +22,13 @@ path = "src/main.rs"
 aead-stream = { version = "0.6.0", features = ["alloc"] }
 argon2 = { version = "0.6.0", default-features = false, features = ["alloc", "zeroize", "parallel"] }
 chacha20poly1305 = { version = "0.11.0", default-features = false, features = ["alloc", "zeroize"] }
+eframe = { version = "0.37", default-features = false, features = ["default_fonts", "glow", "wayland", "x11", "accesskit"] }
 rand = { version = "0.10.4", default-features = false, features = ["sys_rng"] }
+rfd = "0.18.0"
 tempfile = "3.27.0"
 thiserror = "2.0.21"
 zeroize = { version = "1.9.2", features = ["derive"] }
+zxcvbn = { version = "3.1.1", default-features = false }
 
 [dev-dependencies]
 proptest = "1.11.0"

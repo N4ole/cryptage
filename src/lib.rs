@@ -9,6 +9,7 @@ pub mod error;
 pub mod fileops;
 pub mod format;
 pub mod kdf;
+pub mod password;
 pub mod stream;
 
 pub use error::{CryptoError, Result};

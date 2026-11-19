@@ -2,11 +2,26 @@
 
 [graph]
 all-features = true
+# Vérifier le graphe de toutes les plateformes publiées, quel que soit l'hôte.
+targets = [
+    "x86_64-pc-windows-msvc",
+    "x86_64-apple-darwin",
+    "aarch64-apple-darwin",
+    "x86_64-unknown-linux-gnu",
+]
 
 [advisories]
 version = 2
 yanked = "deny"
-ignore = []
+# Exceptions explicites : avis « non maintenu » (aucune vulnérabilité connue) sur des
+# dépendances transitives de l'interface, sans lien avec le moteur cryptographique.
+# Toute nouvelle crate non maintenue fait échouer la CI. À réévaluer à chaque mise à jour.
+ignore = [
+    { id = "RUSTSEC-2026-0543", reason = "chrono : transitive via zxcvbn (estimation de force), aucune vulnérabilité" },
+    { id = "RUSTSEC-2026-0370", reason = "zvariant : transitive Linux via rfd/accesskit (D-Bus), aucune vulnérabilité" },
+    { id = "RUSTSEC-2026-0371", reason = "zbus_names : transitive Linux via rfd/accesskit (D-Bus), aucune vulnérabilité" },
+    { id = "RUSTSEC-2026-0372", reason = "zvariant_derive : transitive Linux via rfd/accesskit (D-Bus), aucune vulnérabilité" },
+]
 
 [licenses]
 version = 2
