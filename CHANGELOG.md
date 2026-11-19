@@ -19,6 +19,11 @@ et le projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
   jamais de fichier partiel, jamais d'écrasement d'un fichier existant.
 - Annulation et suivi de progression à chaque morceau.
 - Vecteur de test de fichier complet produit par une implémentation indépendante (libsodium).
+- Interface graphique egui : onglets « Chiffrer » / « Déchiffrer », choix de fichier ou
+  glisser-déposer, mot de passe masqué avec affichage temporaire, confirmation,
+  indicateur de force (zxcvbn) avec avertissement et acceptation explicite d'un mot de
+  passe faible, barre de progression, annulation, suppression optionnelle et confirmée
+  du fichier d'origine. Opérations dans un thread séparé ; aucun paramètre persisté.
 
 ### Sécurité
 - Correction de RUSTSEC-2026-0385 (`ctutils` ≥ 0.4.4) ; version minimale de Rust : 1.88.
