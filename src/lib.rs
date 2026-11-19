@@ -4,3 +4,9 @@
 
 #![forbid(unsafe_code)]
 #![warn(missing_docs)]
+
+pub mod error;
+pub mod format;
+pub mod kdf;
+
+pub use error::{CryptoError, Result};

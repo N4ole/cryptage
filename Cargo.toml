@@ -2,7 +2,7 @@
 name = "cryptage"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.88"
 license = "MIT"
 description = "Chiffrement et déchiffrement de fichiers, hors ligne, avec interface graphique (XChaCha20-Poly1305 + Argon2id)."
 repository = "https://github.com/N4ole/cryptage"
@@ -19,8 +19,13 @@ name = "cryptage"
 path = "src/main.rs"
 
 [dependencies]
+argon2 = { version = "0.6.0", default-features = false, features = ["alloc", "zeroize", "parallel"] }
+rand = { version = "0.10.4", default-features = false, features = ["sys_rng"] }
+thiserror = "2.0.21"
+zeroize = { version = "1.9.2", features = ["derive"] }
 
 [dev-dependencies]
+proptest = "1.11.0"
 
 [profile.release]
 lto = true
