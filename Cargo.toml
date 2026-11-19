@@ -26,6 +26,7 @@ rand = { version = "0.10.4", default-features = false, features = ["sys_rng"] }
 tempfile = "3.27.0"
 thiserror = "2.0.21"
 zeroize = { version = "1.9.2", features = ["derive"] }
+zxcvbn = { version = "3.1.1", default-features = false }
 
 [dev-dependencies]
 proptest = "1.11.0"
