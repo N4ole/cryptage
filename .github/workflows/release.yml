@@ -147,8 +147,9 @@ jobs:
           VERSION: ${{ needs.verify.outputs.version }}
         run: |
           awk -v v="$VERSION" '
-            $0 ~ "^## \\[" v "\\]" { found = 1; next }
-            found && /^## \[/ { exit }
+            index($0, "## [" v "]") == 1 { found = 1; next }
+            found && index($0, "## [") == 1 { exit }
+            found && /^\[[^]]+\]: / { exit }
             found { print }
           ' CHANGELOG.md > notes.md
           {
