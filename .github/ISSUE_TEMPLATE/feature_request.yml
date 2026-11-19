@@ -1,0 +1,22 @@
+name: Proposer une fonctionnalité
+description: Une idée d'amélioration.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: probleme
+    attributes:
+      label: Besoin
+      description: Quel problème cette fonctionnalité résoudrait-elle ?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solution envisagée
+    validations:
+      required: true
+  - type: textarea
+    id: securite
+    attributes:
+      label: Impact sur la sécurité
+      description: Cette fonctionnalité touche-t-elle au format de fichier, aux secrets ou à la cryptographie ?

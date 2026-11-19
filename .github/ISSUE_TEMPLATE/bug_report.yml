@@ -1,0 +1,39 @@
+name: Signaler un bogue
+description: Un comportement incorrect de l'application.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ⚠️ Pour une **vulnérabilité de sécurité**, n'ouvrez pas d'issue : suivez [SECURITY.md](../SECURITY.md).
+        N'incluez jamais de mot de passe ni de fichier contenant des données réelles.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: v0.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Système d'exploitation
+      options: [Windows, macOS (Intel), macOS (Apple Silicon), Linux]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Que s'est-il passé ? Qu'attendiez-vous ?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes de reproduction
+      placeholder: |
+        1. Ouvrir l'application
+        2. ...
+    validations:
+      required: true

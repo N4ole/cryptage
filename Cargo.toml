@@ -1,0 +1,36 @@
+[package]
+name = "cryptage"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+description = "Chiffrement et déchiffrement de fichiers, hors ligne, avec interface graphique (XChaCha20-Poly1305 + Argon2id)."
+repository = "https://github.com/N4ole/cryptage"
+readme = "README.md"
+keywords = ["encryption", "argon2", "xchacha20poly1305", "gui"]
+categories = ["cryptography", "gui"]
+
+[lib]
+name = "cryptage"
+path = "src/lib.rs"
+
+[[bin]]
+name = "cryptage"
+path = "src/main.rs"
+
+[dependencies]
+
+[dev-dependencies]
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"
+
+# Les tests de flux (> 1 Go) et Argon2 sont très lents sans optimisation.
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.test]
+opt-level = 3

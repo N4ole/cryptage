@@ -1,0 +1,27 @@
+# Rust
+/target/
+**/*.rs.bk
+*.pdb
+
+# Chaîne d'outils Rust locale au projet (voir scripts/activate.ps1)
+/.rust/
+
+# Secrets et configuration locale : ne jamais committer
+.env
+.env.*
+*.key
+*.pem
+
+# Fichiers chiffrés / données de test réelles
+*.enc
+!tests/vectors/*.enc
+
+# Éditeurs et OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Couverture
+lcov.info
+/coverage/
