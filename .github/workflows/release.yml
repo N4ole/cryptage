@@ -1,0 +1,174 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  # Essai à blanc : une PR qui modifie ce workflow compile et empaquette tout,
+  # sans attestation ni publication.
+  pull_request:
+    paths: [".github/workflows/release.yml"]
+
+# Permissions minimales par défaut ; seules les étapes de publication reçoivent plus.
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  verify:
+    name: Vérifications (version, changelog, tests)
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: La version de Cargo.toml doit correspondre au tag
+        id: version
+        shell: bash
+        run: |
+          cargo_version="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -n1)"
+          if [ "${GITHUB_REF_TYPE}" != "tag" ]; then
+            echo "Essai à blanc (pas de tag) : version ${cargo_version}"
+            echo "version=${cargo_version}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          tag_version="${GITHUB_REF_NAME#v}"
+          echo "Tag : ${tag_version} / Cargo.toml : ${cargo_version}"
+          if [ "${tag_version}" != "${cargo_version}" ]; then
+            echo "::error::Le tag ${GITHUB_REF_NAME} ne correspond pas à la version ${cargo_version} de Cargo.toml."
+            exit 1
+          fi
+          if ! grep -q "^## \[${tag_version}\]" CHANGELOG.md; then
+            echo "::error::Aucune section '## [${tag_version}]' dans CHANGELOG.md."
+            exit 1
+          fi
+          echo "version=${tag_version}" >> "$GITHUB_OUTPUT"
+      - name: Dépendances système
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbcommon-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Tests
+        run: cargo test --locked --all-features
+
+  build:
+    name: Build ${{ matrix.target }}
+    needs: verify
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          # Ubuntu 22.04 : glibc plus ancienne, binaire compatible avec plus de distributions.
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v7
+      - name: Dépendances système (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libxkbcommon-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}
+      - name: Compilation release
+        run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Archive
+        shell: bash
+        run: |
+          name="cryptage-v${{ needs.verify.outputs.version }}-${{ matrix.target }}"
+          mkdir -p "dist/${name}"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp "target/${{ matrix.target }}/release/cryptage.exe" "dist/${name}/"
+          else
+            cp "target/${{ matrix.target }}/release/cryptage" "dist/${name}/"
+          fi
+          cp LICENSE README.md CHANGELOG.md "dist/${name}/"
+          cd dist
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            7z a -tzip "${name}.zip" "${name}" > /dev/null
+          else
+            tar -czf "${name}.tar.gz" "${name}"
+          fi
+          rm -rf "${name}"
+          ls -l
+      - uses: actions/upload-artifact@v7
+        with:
+          name: build-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publication de la release
+    needs: [verify, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # créer la release GitHub
+      id-token: write # attestations de provenance (OIDC)
+      attestations: write # attestations de provenance
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: build-*
+          path: dist
+          merge-multiple: true
+      - name: Sommes de contrôle SHA-256
+        working-directory: dist
+        run: |
+          sha256sum -- * > SHA256SUMS
+          cat SHA256SUMS
+      - name: Attestations de provenance
+        if: github.ref_type == 'tag'
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: |
+            dist/*.zip
+            dist/*.tar.gz
+            dist/SHA256SUMS
+      - name: Notes de version depuis le CHANGELOG
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          awk -v v="$VERSION" '
+            $0 ~ "^## \\[" v "\\]" { found = 1; next }
+            found && /^## \[/ { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          {
+            echo
+            echo "---"
+            echo "### Vérifier le téléchargement"
+            echo
+            echo '```sh'
+            echo 'sha256sum -c SHA256SUMS --ignore-missing'
+            echo "gh attestation verify <archive> --repo ${GITHUB_REPOSITORY}"
+            echo '```'
+          } >> notes.md
+          cat notes.md
+      - name: Création de la release GitHub
+        if: github.ref_type == 'tag'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "cryptage ${GITHUB_REF_NAME}" \
+            --notes-file notes.md \
+            --verify-tag
