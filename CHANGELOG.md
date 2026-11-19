@@ -7,6 +7,10 @@ et le projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-19
+
+Première version publique.
+
 ### Ajouté
 
 - Mise en place du dépôt : licence MIT, CI (fmt, clippy, tests, audit, deny, couverture), Dependabot.
@@ -35,3 +39,6 @@ et le projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
 
 - Correction de RUSTSEC-2026-0385 (`ctutils` ≥ 0.4.4).
 - Version minimale de Rust : 1.95 (exigée par eframe 0.37).
+
+[Unreleased]: https://github.com/N4ole/cryptage/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/N4ole/cryptage/releases/tag/v0.1.0
