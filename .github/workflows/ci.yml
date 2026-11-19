@@ -76,7 +76,7 @@ jobs:
           tool: cargo-llvm-cov
       - name: Mesure de couverture
         run: cargo llvm-cov --all-features --lib --tests --lcov --output-path lcov.info
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: couverture-lcov
           path: lcov.info
