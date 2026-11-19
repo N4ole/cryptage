@@ -224,6 +224,7 @@ dependencies = [
  "chacha20poly1305",
  "proptest",
  "rand",
+ "tempfile",
  "thiserror",
  "zeroize",
 ]

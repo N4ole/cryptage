@@ -23,6 +23,7 @@ aead-stream = { version = "0.6.0", features = ["alloc"] }
 argon2 = { version = "0.6.0", default-features = false, features = ["alloc", "zeroize", "parallel"] }
 chacha20poly1305 = { version = "0.11.0", default-features = false, features = ["alloc", "zeroize"] }
 rand = { version = "0.10.4", default-features = false, features = ["sys_rng"] }
+tempfile = "3.27.0"
 thiserror = "2.0.21"
 zeroize = { version = "1.9.2", features = ["derive"] }
 

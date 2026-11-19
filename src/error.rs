@@ -52,6 +52,10 @@ pub enum CryptoError {
     /// L'opération a été annulée par l'utilisateur.
     #[error("Opération annulée.")]
     Cancelled,
+
+    /// Le fichier de destination existe déjà (jamais écrasé).
+    #[error("Le fichier de destination existe déjà : choisissez un autre nom.")]
+    OutputExists,
 }
 
 /// Alias de résultat du moteur.
