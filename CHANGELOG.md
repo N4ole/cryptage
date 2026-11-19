@@ -8,6 +8,7 @@ et le projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
 ## [Unreleased]
 
 ### Ajouté
+
 - Mise en place du dépôt : licence MIT, CI (fmt, clippy, tests, audit, deny, couverture), Dependabot.
 - Format de fichier v1 : en-tête versionné de 60 octets (marqueur, version, paramètres Argon2id, sel, nonce).
 - Dérivation de clé Argon2id (512 Mio, 4 itérations, 4 voies par défaut) avec bornes de sécurité au déchiffrement.
@@ -24,6 +25,13 @@ et le projet respecte le [versionnage sémantique](https://semver.org/lang/fr/).
   indicateur de force (zxcvbn) avec avertissement et acceptation explicite d'un mot de
   passe faible, barre de progression, annulation, suppression optionnelle et confirmée
   du fichier d'origine. Opérations dans un thread séparé ; aucun paramètre persisté.
+- Workflow de release sur tag `v*.*.*` : binaires Windows, macOS (Intel et Apple Silicon)
+  et Linux, `SHA256SUMS`, attestations de provenance, notes extraites du CHANGELOG,
+  vérification de la concordance tag / `Cargo.toml`.
+- Documentation complète : utilisation, format de fichier, choix cryptographiques,
+  dépendances justifiées, limites connues, procédure de publication.
 
 ### Sécurité
-- Correction de RUSTSEC-2026-0385 (`ctutils` ≥ 0.4.4) ; version minimale de Rust : 1.88.
+
+- Correction de RUSTSEC-2026-0385 (`ctutils` ≥ 0.4.4).
+- Version minimale de Rust : 1.95 (exigée par eframe 0.37).
